@@ -21,14 +21,17 @@ namespace BayCityHoldenSync
         public string Title { get; set; }
         [JsonProperty(PropertyName = "initial_price")]
         public int Price { get; set; }
+        [JsonProperty(PropertyName = "colour")]
         public string Colour { get; set; }
         [JsonProperty(PropertyName = "kilometres")]
         public string Odometer { get; set; }
-        
+
         [JsonProperty(PropertyName = "registration_number")]
         public string Rego { get; set; }
         [JsonProperty(PropertyName = "car_images")]
         public List<CarImage> Images { get; set; }
+        [JsonProperty(PropertyName = "condition")]
+        public string Condition { get; set; }
     }
 
     public class CarImage
