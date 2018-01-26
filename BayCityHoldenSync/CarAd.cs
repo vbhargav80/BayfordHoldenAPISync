@@ -38,5 +38,6 @@ namespace BayCityHoldenSync
         public string Colour { get; set; }
         public string Odometer { get; set; }
         public string Rego { get; set; }
+        public string Condition { get; set; }
     }
 }

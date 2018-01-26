@@ -44,7 +44,8 @@ namespace BayCityHoldenSync
                     Title = ad.Title,
                     Vin = ad.Vin,
                     Year = ad.Year,
-                    Images = new List<CarImage> { new CarImage() {  Url = ad.ImageUrl} }
+                    Condition = string.IsNullOrEmpty(ad.Condition) ? "NA" : ad.Condition,
+                    Images = new List<CarImage> { new CarImage() { Url = ad.ImageUrl } }
                 });
             }
 
@@ -54,6 +55,7 @@ namespace BayCityHoldenSync
             request.AddHeader("authorization", "token 073cf860e6ea60734fad061e1588749ec66c2b2e");
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", JsonConvert.SerializeObject(apiCarAds), ParameterType.RequestBody);
+            Logger.Debug(JsonConvert.SerializeObject(apiCarAds));
 
             var response = client.Execute(request);
             Logger.Info("API status code is {0}", response.StatusDescription);
@@ -105,7 +107,7 @@ namespace BayCityHoldenSync
                     {
 
                     }
-                    
+
                 }
             }
 
@@ -141,16 +143,18 @@ namespace BayCityHoldenSync
                 carAd.Price = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:price:asking']").GetAttributeValue("value", "");
                 carAd.Odometer = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:odometer:mi']").GetAttributeValue("value", "");
                 carAd.Colour = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:colorcombination:exteriorcolor_1']").GetAttributeValue("value", "");
-                carAd.Rego = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:reg_plate']").GetAttributeValue("value", "");
+                carAd.Rego = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:reg_plate']")?.GetAttributeValue("value", "");
+                carAd.Condition = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:reg_plate']")?.GetAttributeValue("value", "");
                 carAd.ImageUrl = imageUri.Replace("x200", "x650");
                 carAd.FinalUrl = detailsUrl;
                 carAd.LastModified = DateTime.UtcNow;
+                carAd.Condition = detailsPage.Html.SelectSingleNode("//span[@itemprop='itemCondition']/text()[1]").InnerText;
 
                 repository.Upsert(carAd);
             }
             catch (Exception ex)
             {
-
+                Logger.Error(ex, "Error for item {0}", detailsUrl);
             }
         }
     }
