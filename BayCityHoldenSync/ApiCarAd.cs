@@ -11,7 +11,9 @@ namespace BayCityHoldenSync
     {
         [JsonProperty(PropertyName = "VIN")]
         public string Vin { get; set; }
+        [JsonProperty(PropertyName = "make")]
         public string Make { get; set; }
+        [JsonProperty(PropertyName = "model")]
         public string Model { get; set; }
         [JsonProperty(PropertyName = "model_year")]
         public string Year { get; set; }
