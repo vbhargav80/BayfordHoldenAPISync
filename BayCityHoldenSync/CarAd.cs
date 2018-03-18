@@ -39,5 +39,7 @@ namespace BayCityHoldenSync
         public string Odometer { get; set; }
         public string Rego { get; set; }
         public string Condition { get; set; }
+        public string Transmission { get; set; }
+        public string Engine { get; set; }
     }
 }

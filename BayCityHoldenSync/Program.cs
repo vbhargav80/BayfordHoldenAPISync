@@ -18,7 +18,8 @@ namespace BayCityHoldenSync
         static void Main(string[] args)
         {
             Logger.Debug("Starting Scraper");
-            RunScraper();
+            if (args.Length == 0)
+                RunScraper();
             Logger.Debug("Finished Scraper");
             Logger.Debug("Starting API sync");
             UploadToApi();
@@ -45,7 +46,10 @@ namespace BayCityHoldenSync
                     Vin = ad.Vin,
                     Year = ad.Year,
                     Condition = string.IsNullOrEmpty(ad.Condition) ? "NA" : ad.Condition,
-                    Images = new List<CarImage> { new CarImage() { Url = ad.ImageUrl } }
+                    Images = new List<CarImage> { new CarImage() { Url = ad.ImageUrl } },
+                    Engine = ad.Engine,
+                    Transmission = ad.Transmission,
+                    Body = ad.Body
                 });
             }
 
@@ -132,6 +136,9 @@ namespace BayCityHoldenSync
                 var make = detailsPage.Html.SelectSingleNode("//header/div[@class='h1']/span[@itemprop='manufacturer']/text()[1]").InnerText.CleanInnerText();
                 var model = detailsPage.Html.SelectSingleNode("//header/div[@class='h1']/span[@itemprop='model']/text()[1]").InnerText.CleanInnerText();
                 var trim = detailsPage.Html.SelectSingleNode("//header/div[@class='h1']/span[@itemprop='trim']/text()[1]").InnerText.CleanInnerText();
+                var transmission = detailsPage.Html.SelectSingleNode("//span[@title='TRANSMISSION']")?.GetNextSibling("span");
+                var engineData = detailsPage.Html.SelectSingleNode("//span[@title='ENGINE DATA']")?.GetNextSibling("span");
+                var bodyType = detailsPage.Html.SelectSingleNode("//span[contains(text(), 'Body Description')]")?.NextSibling;
 
                 carAd.Title = string.Format("{0} {1} {2} {3}", year, make, model, trim);
                 carAd.StockNumber = detailsPage.Html.SelectSingleNode("//input[@name='vehicle:buy:stock']").GetAttributeValue("value", "");
@@ -149,6 +156,9 @@ namespace BayCityHoldenSync
                 carAd.FinalUrl = detailsUrl;
                 carAd.LastModified = DateTime.UtcNow;
                 carAd.Condition = detailsPage.Html.SelectSingleNode("//span[@itemprop='itemCondition']/text()[1]").InnerText;
+                carAd.Transmission = transmission != null ? transmission.InnerText : string.Empty;
+                carAd.Engine = engineData != null ? engineData.InnerText : string.Empty;
+                carAd.Body = bodyType != null ? bodyType.InnerText : string.Empty;
 
                 repository.Upsert(carAd);
             }

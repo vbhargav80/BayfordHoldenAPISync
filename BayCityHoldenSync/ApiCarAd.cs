@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BayCityHoldenSync
 {
@@ -34,6 +30,12 @@ namespace BayCityHoldenSync
         public List<CarImage> Images { get; set; }
         [JsonProperty(PropertyName = "condition")]
         public string Condition { get; set; }
+        [JsonProperty(PropertyName = "transmission")]
+        public string Transmission { get; set; }
+        [JsonProperty(PropertyName = "engine")]
+        public string Engine { get; set; }
+        [JsonProperty(PropertyName = "body_type")]
+        public string Body { get; set; }
     }
 
     public class CarImage
